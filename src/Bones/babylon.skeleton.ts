@@ -13,6 +13,8 @@
 
         private _ranges: { [name: string]: AnimationRange; } = {};
 
+        private _lastAbsoluteTransformsUpdateId = -1;
+
         constructor(public name: string, public id: string, scene: Scene) {
             this.bones = [];
 
@@ -29,6 +31,11 @@
             if (this.needInitialSkinMatrix && mesh._bonesTransformMatrices) {
                 return mesh._bonesTransformMatrices;
             }
+
+            if (!this._transformMatrices) {
+                this.prepare();
+            }
+
             return this._transformMatrices;
         }
 
@@ -229,20 +236,20 @@
                 for (var index = 0; index < this._meshesWithPoseMatrix.length; index++) {
                     var mesh = this._meshesWithPoseMatrix[index];
 
-                    if (!mesh._bonesTransformMatrices || mesh._bonesTransformMatrices.length !== 16 * (this.bones.length + 1)) {
-                        mesh._bonesTransformMatrices = new Float32Array(16 * (this.bones.length + 1));
-                    }
-
                     var poseMatrix = mesh.getPoseMatrix();
 
-                    // Prepare bones
-                    for (var boneIndex = 0; boneIndex < this.bones.length; boneIndex++) {
-                        var bone = this.bones[boneIndex];
+                    if (!mesh._bonesTransformMatrices || mesh._bonesTransformMatrices.length !== 16 * (this.bones.length + 1)) {
+                        mesh._bonesTransformMatrices = new Float32Array(16 * (this.bones.length + 1));
+                    
+                        // Prepare bones
+                        for (var boneIndex = 0; boneIndex < this.bones.length; boneIndex++) {
+                            var bone = this.bones[boneIndex];
 
-                        if (!bone.getParent()) {
-                            var matrix = bone.getBaseMatrix();
-                            matrix.multiplyToRef(poseMatrix, Tmp.Matrix[0]);
-                            bone._updateDifferenceMatrix(Tmp.Matrix[0]);
+                            if (!bone.getParent()) {
+                                var matrix = bone.getBaseMatrix();
+                                matrix.multiplyToRef(poseMatrix, Tmp.Matrix[1]);
+                                bone._updateDifferenceMatrix(Tmp.Matrix[1]);
+                            }
                         }
                     }
 
@@ -402,5 +409,29 @@
             }
             return skeleton;
         }
+
+        public computeAbsoluteTransforms (forceUpdate = false): void {
+
+            var renderId = this._scene.getRenderId();
+            
+            if (this._lastAbsoluteTransformsUpdateId != renderId || forceUpdate ) {
+                this.bones[0].computeAbsoluteTransforms();
+                this._lastAbsoluteTransformsUpdateId = renderId;
+            }
+            
+        }
+
+        public getPoseMatrix(): Matrix {
+            
+            var poseMatrix: Matrix;
+            
+            if(this._meshesWithPoseMatrix.length > 0){
+                poseMatrix = this._meshesWithPoseMatrix[0].getPoseMatrix();
+            }
+
+            return poseMatrix;
+
+        }
+
     }
 }

@@ -9,9 +9,6 @@ namespace BabylonExport.Entities
         public string id { get; set; }
 
         [DataMember]
-        public string parentId { get; set; }
-
-        [DataMember]
         public string materialId { get; set; }
 
         [DataMember]
@@ -110,6 +107,12 @@ namespace BabylonExport.Entities
         [DataMember]
         public float physicsRestitution { get; set; }
 
+        [DataMember]
+        public object metadata { get; set; }
+
+        [DataMember]
+        public string tags { get; set; }
+
         public BabylonMesh()
         {
             isEnabled = true;
@@ -126,6 +129,8 @@ namespace BabylonExport.Entities
             skeletonId = -1;
 
             pickable = true;
+
+            numBoneInfluencers = 4;
         }
     }
 }

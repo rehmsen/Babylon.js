@@ -2,6 +2,7 @@
 interface Window {
     mozIndexedDB(func: any): any;
     webkitIndexedDB(func: any): any;
+    msIndexedDB: IDBFactory;
     IDBTransaction(func: any): any;
     webkitIDBTransaction(func: any): any;
     msIDBTransaction(func: any): any;
@@ -22,6 +23,22 @@ interface Window {
     Math: Math;
     Uint8Array: Uint8ArrayConstructor;
     Float32Array: Float32ArrayConstructor;
+    mozURL: any;
+    msURL: any;
+}
+
+interface WebGLVertexArrayObject {
+
+}
+
+interface WebGLRenderingContext {
+    drawArraysInstanced(mode: number, first: number, count: number, primcount: number): void;
+    drawElementsInstanced(mode: number, count: number, type: number, offset: number, primcount: number): void;
+    vertexAttribDivisor(index: number, divisor: number): void;
+
+    createVertexArray(): any;
+    bindVertexArray(vao: WebGLVertexArrayObject): void;
+    deleteVertexArray(vao: WebGLVertexArrayObject): void;
 }
 
 interface AudioContext extends EventTarget {
@@ -47,9 +64,9 @@ interface Document {
 
 interface HTMLCanvasElement {
     requestPointerLock(): void;
-    msRequestPointerLock(): void;
-    mozRequestPointerLock(): void;
-    webkitRequestPointerLock(): void;
+    msRequestPointerLock?(): void;
+    mozRequestPointerLock?(): void;
+    webkitRequestPointerLock?(): void;
 }
 
 interface CanvasRenderingContext2D {
@@ -108,6 +125,14 @@ interface Navigator {
     getVRDisplays: () => any;
     mozGetVRDevices: (any: any) => any;
     isCocoonJS: boolean;
+    getUserMedia: any;
+    webkitGetUserMedia: any;
+    mozGetUserMedia: any;
+    msGetUserMedia: any;
+}
+
+interface HTMLVideoElement {
+    mozSrcObject: any;
 }
 
 interface Screen {
